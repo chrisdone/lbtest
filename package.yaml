@@ -28,6 +28,7 @@ dependencies:
 - text
 - lucid
 - time
+- hostname
 - mtl
 
 executables:

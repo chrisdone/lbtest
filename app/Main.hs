@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+import           Network.HostName
 import           Control.Applicative
 import           Data.Maybe
 import           Network.Wai.Handler.Warp
@@ -18,6 +19,7 @@ app :: Request -> (Response -> IO ResponseReceived) -> IO ResponseReceived
 app request respond = do
   now <- getCurrentTime
   env <- getEnvironment
+  hostname <- getHostName
   respond $
     responseLBS
       status200
@@ -28,6 +30,8 @@ app request respond = do
                           style_ css)
                 body_
                   (do h1_ "lbtest: OK"
+                      p_ (do "Hostname: "
+                             toHtml hostname)
                       p_ (do "Timestamp: "
                              toHtml (show now))
                       h2_ "Request"
