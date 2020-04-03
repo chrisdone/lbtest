@@ -34,6 +34,7 @@ app request respond = do
                           style_ css)
                     body_
                       (do h1_ "lbtest: OK"
+                          p_ (a_ [href_ "https://hub.docker.com/r/chrisdone/lbtest"] "lbtest")
                           p_
                             (do "Hostname: "
                                 toHtml hostname)
