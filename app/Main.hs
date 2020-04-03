@@ -17,27 +17,33 @@ import           Network.Wai.Handler.Warp (run)
 
 app :: Request -> (Response -> IO ResponseReceived) -> IO ResponseReceived
 app request respond = do
-  now <- getCurrentTime
-  env <- getEnvironment
-  hostname <- getHostName
-  respond $
-    responseLBS
-      status200
-      [("Content-Type", "text/html; charset=utf-8")]
-      (renderBS
-         (doctypehtml_
-            (do head_ (do title_ "lbtest: OK!"
+  if rawPathInfo request == "/ping"
+    then respond $ responseLBS status200 [("Content-Type", "text/plain")] mempty
+    else do
+      now <- getCurrentTime
+      env <- getEnvironment
+      hostname <- getHostName
+      respond $
+        responseLBS
+          status200
+          [("Content-Type", "text/html; charset=utf-8")]
+          (renderBS
+             (doctypehtml_
+                (do head_
+                      (do title_ "lbtest: OK!"
                           style_ css)
-                body_
-                  (do h1_ "lbtest: OK"
-                      p_ (do "Hostname: "
-                             toHtml hostname)
-                      p_ (do "Timestamp: "
-                             toHtml (show now))
-                      h2_ "Request"
-                      pre_ (commandsToHtml (lexx (show request)))
-                      h2_ "Environment"
-                      pre_ (commandsToHtml (lexx (show env)))))))
+                    body_
+                      (do h1_ "lbtest: OK"
+                          p_
+                            (do "Hostname: "
+                                toHtml hostname)
+                          p_
+                            (do "Timestamp: "
+                                toHtml (show now))
+                          h2_ "Request"
+                          pre_ (commandsToHtml (lexx (show request)))
+                          h2_ "Environment"
+                          pre_ (commandsToHtml (lexx (show env)))))))
 
 main :: IO ()
 main = do
